@@ -196,7 +196,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\TelescopeServiceProvider::class,
-
+        App\Providers\CustomServiceProvider::class,
     ],
 
     /*
@@ -211,7 +211,9 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // 'ExampleClass' => App\Example\ExampleClass::class,
+        'LMSAuthService'    => \App\Http\Services\Facade\AuthServiceFacade::class,
+        'LMSTeacherService' => \App\Http\Services\Facade\TeacherServiceFacade::class,
+        'LMSClassService'   => \App\Http\Services\Facade\ClassServiceFacade::class,
     ])->toArray(),
 
 ];

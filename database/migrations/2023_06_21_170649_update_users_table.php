@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      *
@@ -14,8 +13,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->text('token')->nullable()->after('remember_token');
-            $table->text('info')->nullable()->after('token');
+            $table->text('lms_id')->nullable()->after('id');
+            $table->string('password')->nullable()->change();
         });
     }
 
@@ -27,7 +26,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['token', 'info']);
+            $table->dropColumn(['lms_id']);
+            $table->string('password')->change();
         });
     }
 };

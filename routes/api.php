@@ -19,14 +19,23 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::get('/', fn () => response()->json(['message' => '༼ つ ◕_◕ ༽つ']));
+Route::get('/', fn() => response()->json(['message' => '༼ つ ◕_◕ ༽つ']));
 
-Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
+
+Route::name('auth.')->group(function () {
+    Route::post('/login', [AuthController::class, 'login'])->name('login');
+    Route::any('/authorize-teacher-from-dcsr',
+        [AuthController::class, 'authorizeTeacherFromDCSR'])->name('authorize-teacher-from-dcsr');
+});
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
-    Route::any('/user', [AuthController::class, 'user'])->name('auth.user');
-    Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+    Route::name('auth.')->group(function () {
+        Route::get('/user', [AuthController::class, 'user'])->name('user');
+        Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    });
 
-    Route::match(['get', 'post'], '/classes', [ClassController::class, 'index'])->name('classes.index');
-    Route::match(['get', 'post'], '/classes/{id}', [ClassController::class, 'show'])->name('classes.show');
+    Route::name('classes.')->group(function () {
+        Route::get('/classes', [ClassController::class, 'index'])->name('index');
+        Route::get('/classes/{id}', [ClassController::class, 'show'])->name('show');
+    });
 });

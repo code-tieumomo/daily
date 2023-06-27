@@ -11,11 +11,11 @@ class ClassController extends Controller
 {
     public function index(Request $request)
     {
-        $page = $request->page;
-        $number = $request->number;
+        $page      = $request->page;
+        $number    = $request->number;
         $teacherId = $request->teacherId;
 
-        $classes = Cache::remember('classes-' . Auth::id(), 600, function () use ($number, $page, $teacherId) {
+        $classes = Cache::remember('classes-'.Auth::id(), 600, function () use ($number, $page, $teacherId) {
             return APIService::getClasses(Auth::user()->token, $teacherId, $page, $number);
         });
         if (isset($classes->errors)) {
