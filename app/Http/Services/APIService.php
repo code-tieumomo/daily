@@ -83,31 +83,16 @@ class APIService
         return $response->object();
     }
 
-    static function getClasses($token, $teacherId, $page = 1, $number = 20, $criteria = null)
+    static function getClasses($token, $teacherId, $page = 1, $number = 20, $criteria = [])
     {
-        // "comments":{
-        //     "criteria":[
-        //         {
-        //             "commented":false,
-        //             "slotStartTime":{
-        //             "lte":"2023-06-26T02:53:11.883Z",
-        //                 "gte":"2021-10-18T17:00:00.000Z"
-        //             }
-        //         },
-        //         {
-        //             "sendCommentStatus":"FAILED"
-        //         },
-        //         {
-        //             "commented":false,
-        //             "slotStartTime":{
-        //             "gte":"2023-06-25T17:00:00.000Z",
-        //                 "lte":"2023-06-26T16:59:59.999Z"
-        //             }
-        //         }
-        //     ]
-        // }
-
         $getClassesEndpoint = "https://lms-api.mindx.vn/";
+        if (empty($criteria)) {
+            $criteria = config('lms.classes_criteria');
+        }
+
+        $criteria['pageIndex']    = $page - 1;
+        $criteria['itemsPerPage'] = $number;
+        $criteria['teacherId']    = $teacherId;
 
         $response = Http::withHeaders(
             [
@@ -117,12 +102,7 @@ class APIService
             '
                 {
                     "operationName":"GetClasses",
-                    "variables":{
-                        "pageIndex":' . ($page - 1) . ',
-                        "itemsPerPage":' . $number . ',
-                        "orderBy":"createdAt_desc",
-                        "teacherId":"' . $teacherId . '",
-                    },
+                    "variables":' . json_encode($criteria) . ',
                     "query":"query GetClasses($search: String, $centre: String, $centres: [String], $courses: [String], $courseLines: [String], $startDateFrom: Date, $startDateTo: Date, $endDateFrom: Date, $endDateTo: Date, $haveSlotFrom: Date, $haveSlotTo: Date, $statusNotEquals: String, $attendanceCheckedExists: Boolean, $status: String, $statusIn: [String], $attendanceStatus: [String], $studentAttendanceStatus: [String], $teacherAttendanceStatus: [String], $pageIndex: Int!, $itemsPerPage: Int!, $orderBy: String, $teacherId: String, $teacherSlot: [String], $passedSessionIndex: Int, $unpassedSessionIndex: Int, $haveSlotIn: HaveSlotIn, $comments: ClassCommentQuery) {\n  classes(payload: {filter_textSearch: $search, centre_equals: $centre, centre_in: $centres, teacher_equals: $teacherId, teacherSlots: $teacherSlot, course_in: $courses, courseLine_in: $courseLines, startDate_gt: $startDateFrom, startDate_lt: $startDateTo, endDate_gt: $endDateFrom, endDate_lt: $endDateTo, haveSlot_from: $haveSlotFrom, haveSlot_to: $haveSlotTo, status_ne: $statusNotEquals, status_in: $statusIn, status_equals: $status, attendanceStatus_in: $attendanceStatus, studentAttendanceStatus_in: $studentAttendanceStatus, teacherAttendanceStatus_in: $teacherAttendanceStatus, attendanceChecked_exists: $attendanceCheckedExists, haveSlot_in: $haveSlotIn, passedSessionIndex: $passedSessionIndex, unpassedSessionIndex: $unpassedSessionIndex, pageIndex: $pageIndex, itemsPerPage: $itemsPerPage, orderBy: $orderBy, comments: $comments}) {\n    data {\n      id\n      name\n      course {\n        id\n        name\n        shortName\n      }\n      startDate\n      endDate\n      status\n      centre {\n        id\n        name\n        shortName\n      }\n      openingRoomNo\n      numberOfSessions\n      numberOfSessionsStatus\n      sessionHour\n      totalHour\n      slots {\n        _id\n        date\n        startTime\n        endTime\n        sessionHour\n        summary\n        homework\n        teachers {\n          _id\n          teacher {\n            id\n            username\n            fullName\n            email\n            phoneNumber\n            user\n            imageUrl\n          }\n          role {\n            id\n            name\n            shortName\n          }\n          isActive\n        }\n        teacherAttendance {\n          _id\n          teacher {\n            id\n            username\n            fullName\n            email\n            phoneNumber\n            user\n            imageUrl\n          }\n          status\n          note\n          createdBy\n          createdAt\n          lastModifiedBy\n          lastModifiedAt\n        }\n        studentAttendance {\n          _id\n          student {\n            id\n            fullName\n            phoneNumber\n            email\n            gender\n            imageUrl\n          }\n          status\n          comment\n          sendCommentStatus\n        }\n      }\n      students {\n        _id\n        student {\n          id\n          customer {\n            fullName\n            phoneNumber\n            email\n            facebook\n            zalo\n          }\n        }\n        note\n        activeInClass\n        createdBy\n        createdAt\n      }\n      teachers {\n        _id\n        teacher {\n          id\n          username\n          fullName\n          imageUrl\n          email\n          phoneNumber\n        }\n        role {\n          id\n          name\n          shortName\n          description\n          isActive\n        }\n        isActive\n      }\n      operator {\n        id\n        username\n        firstName\n        middleName\n        lastName\n      }\n      hasSchedule\n      createdBy\n      createdAt\n      lastModifiedBy\n      lastModifiedAt\n    }\n    pagination {\n      type\n      total\n    }\n  }\n}\n"
                 }
             ',
@@ -200,6 +180,41 @@ class APIService
 
     //     return $response;
     // }
+
+    static function setReview($token, $classId, $slotId, $studentId, $studentAttendanceId, $comment)
+    {
+        $setReviewEndpoint = 'https://lms-api.mindx.vn/';
+
+        $response = Http::withHeaders(
+            [
+                'Authorization' => $token,
+            ]
+        )->withBody(
+            '
+                {
+                    "operationName":"UpdateSlotComment",
+                    "variables":{
+                        "payload":{
+                            "slotId":"' . $slotId . '",
+                            "studentComment":{
+                                "studentAttendanceId":"' . $studentAttendanceId . '",
+                                "studentId":"' . $studentId . '",
+                                "content":"' . $comment . '",
+                                "byAreas":[
+
+                                ]
+                            },
+                            "classId":"' . $classId . '"
+                        }
+                    },
+                    "query":"mutation UpdateSlotComment($payload: UpdateSlotCommentCommand!) {\n  classes {\n    updateSlotComment(payload: $payload) {\n      id\n      name\n      slots {\n        _id\n        date\n        startTime\n        endTime\n        sessionHour\n        teachers {\n          _id\n          teacher {\n            id\n            username\n            code\n            fullName\n            email\n            phoneNumber\n            user\n            imageUrl\n          }\n          role {\n            id\n            name\n            shortName\n          }\n          isActive\n        }\n        teacherAttendance {\n          _id\n          teacher {\n            id\n            username\n            fullName\n            email\n            phoneNumber\n            user\n            imageUrl\n          }\n          status\n          note\n          createdBy\n          createdAt\n          lastModifiedBy\n          lastModifiedAt\n        }\n        studentAttendance {\n          _id\n          student {\n            id\n            fullName\n            phoneNumber\n            email\n            gender\n            imageUrl\n            customer {\n              email\n            }\n          }\n          comment\n          sendCommentStatus\n          status\n          commentByAreas {\n            grade\n            content\n            commentAreaId\n          }\n          createdBy\n          createdAt\n          lastModifiedBy\n          lastModifiedAt\n        }\n        summary\n        homework\n        createdAt\n        createdBy\n        lastModifiedAt\n        lastModifiedBy\n      }\n    }\n  }\n}\n"
+                }
+            ',
+            'application/json'
+        )->post($setReviewEndpoint);
+
+        return $response->object();
+    }
 
     // static function setReview($accessToken, $classId, $slotId, $studentAttendanceId, $content)
     // {

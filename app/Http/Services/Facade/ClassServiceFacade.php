@@ -13,7 +13,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static object|array|null getClassesAndKeepUserAlive(User $user, $page = 1, $number = 10)
+ * @method static object|array|null getClassesAndKeepUserAlive(User $user, $page = 1, $number = 10, $criteria = [])
  *
  * @see \App\Http\Services\ClassService
  */

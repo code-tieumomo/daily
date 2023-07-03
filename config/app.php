@@ -214,6 +214,7 @@ return [
         'LMSAuthService'    => \App\Http\Services\Facade\AuthServiceFacade::class,
         'LMSTeacherService' => \App\Http\Services\Facade\TeacherServiceFacade::class,
         'LMSClassService'   => \App\Http\Services\Facade\ClassServiceFacade::class,
+        'LMSCommentService' => \App\Http\Services\Facade\CommentServiceFacade::class,
     ])->toArray(),
 
 ];

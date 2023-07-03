@@ -10,6 +10,7 @@
     "require": {
         "php": "^8.0.2",
         "ext-curl": "*",
+        "bensampo/laravel-enum": "^6.3",
         "binarytorch/larecipe": "^2.6",
         "doctrine/dbal": "^3.6",
         "guzzlehttp/guzzle": "^7.2",

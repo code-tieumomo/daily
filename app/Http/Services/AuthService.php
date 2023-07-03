@@ -30,7 +30,7 @@ class AuthService
         return $loginResponse;
     }
 
-    public function loginLMSAndSyncLocalUser($email, $password): object|array|null
+    public function loginLMSAndSyncLocalUser($email, $password): User|array|null
     {
         $loginResponse = $this->loginLMS($email, $password);
         if (isset($loginResponse->error)) {

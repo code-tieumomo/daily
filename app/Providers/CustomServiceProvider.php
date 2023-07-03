@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Http\Services\AuthService;
 use App\Http\Services\ClassService;
+use App\Http\Services\CommentService;
 use App\Http\Services\TeacherService;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,6 +27,10 @@ class CustomServiceProvider extends ServiceProvider
 
         $this->app->singleton('class-service', function () {
             return new ClassService();
+        });
+
+        $this->app->singleton('comment-service', function () {
+            return new CommentService();
         });
     }
 

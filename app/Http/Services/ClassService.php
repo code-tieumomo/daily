@@ -14,12 +14,12 @@ use LMSAuthService;
 
 class ClassService
 {
-    public function getClassesAndKeepUserAlive(User &$user, $page = 1, $number = 10): object|array|null
+    public function getClassesAndKeepUserAlive(User &$user, $page = 1, $number = 10, $criteria = []): object|array|null
     {
-        $classes = APIService::getClasses($user->token, $user->info?->info?->_id, $page, $number);
+        $classes = APIService::getClasses($user->token, $user->info?->info?->_id, $page, $number, $criteria);
         if (isset($classes->errors)) {
             $user    = LMSAuthService::loginLMSAndSyncLocalUser($user->email, $user->password);
-            $classes = APIService::getClasses($user->token, $user->info?->info?->_id, $page, $number);
+            $classes = APIService::getClasses($user->token, $user->info?->info?->_id, $page, $number, $criteria);
         }
 
         return $classes;

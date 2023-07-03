@@ -15,12 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::middleware('auth:sanctum')->get('/user', function(Request $request) {
-//     return $request->user();
-// });
-
 Route::get('/', fn() => response()->json(['message' => '༼ つ ◕_◕ ༽つ']));
-
 
 Route::name('auth.')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('login');
@@ -36,6 +31,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::name('classes.')->group(function () {
         Route::get('/classes', [ClassController::class, 'index'])->name('index');
+        Route::get('/classes/in-class', [ClassController::class, 'inClass'])->name('in-class');
         Route::get('/classes/{id}', [ClassController::class, 'show'])->name('show');
     });
 });
