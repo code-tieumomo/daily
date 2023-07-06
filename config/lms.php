@@ -9,13 +9,13 @@
 
 return [
     // Số lần thử đăng nhập tối đa
-    'max_login_attempts' => 3,
+    'max_login_attempts'        => 3,
 
     // Khoảng thời gian chênh lệnh (tính bằng giây) so với giờ học (Ví dụ: 5 phút trước giờ học, 5 phút sau giờ học)
-    'in_class_diff'      => 5 * 60,
+    'in_class_diff'             => 5 * 60,
 
     // Các tiêu chí tìm kiếm lớp học
-    'classes_criteria'   => [
+    'classes_criteria'          => [
         "search"               => "",
         "centres"              => [],
         "courses"              => [],
@@ -32,4 +32,7 @@ return [
         "haveSlotIn"           => ["from" => null, "to" => null],
         "comments"             => ["criteria" => []],
     ],
+
+    // File mẫu
+    'docs_sample_checkpoint_id' => env('DOCS_SAMPLE_CHECKPOINT_ID', '5f1b9b3b9b9b7c0017b3e3a0'),
 ];

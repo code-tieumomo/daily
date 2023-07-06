@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClassController;
+use App\Http\Controllers\StorageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,4 +35,65 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('/classes/in-class', [ClassController::class, 'inClass'])->name('in-class');
         Route::get('/classes/{id}', [ClassController::class, 'show'])->name('show');
     });
+
+    Route::name('storages.')->group(function () {
+        Route::get('/storages', [StorageController::class, 'index'])->name('index');
+        Route::post('/create-checkpoint-{number}',
+            [StorageController::class, 'createCheckpoint'])->name('create_checkpoint');
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| Test
+|--------------------------------------------------------------------------
+*/
+Route::get('test-google', function () {
+    $client = new \Google\Client();
+    $client->setApplicationName('daily');
+    $client->setScopes([\Google\Service\Drive::DRIVE]);
+    $client->setAccessType('offline');
+    $client->setAuthConfig(storage_path('app/google/credentials.json'));
+    $driveService = new Google\Service\Drive($client);
+
+    $pageToken = null;
+    do {
+        $response = $driveService->files->listFiles(array(
+            'q'         => "'root' in parents",
+            'spaces'    => 'drive',
+            'pageToken' => $pageToken,
+            'fields'    => 'nextPageToken, files(id, name)',
+        ));
+        $files[]  = $response->files;
+
+        $pageToken = $response->pageToken;
+    } while ($pageToken != null);
+    dd(collect($files[0])->map(function ($file) {
+        return $file->name;
+    }));
+
+    // try {
+    //     $postBody = new \Google\Service\Drive\DriveFile([
+    //         'name'     => 'This is a test folder ' . date_create()->format('d-m-Y H:i:s'),
+    //         'mimeType' => 'application/vnd.google-apps.folder',
+    //     ]);
+    //
+    //     $result = $driveService->files->create($postBody);
+    //     echo '<pre>';
+    //     print_r('<a target="_blank" href="https://drive.google.com/drive/folders/' . $result->id . '">LINK</a>');
+    //     echo '</pre>';
+    //
+    //     $newPermission = new \Google\Service\Drive\Permission([
+    //         'type'         => 'user',
+    //         'role'         => 'writer',
+    //         'emailAddress' => 'code.tieumomo@gmail.com',
+    //     ]);
+    //
+    //     $permission = $driveService->permissions->create(
+    //         $result->id,
+    //         $newPermission
+    //     );
+    // } catch (Exception $e) {
+    //     dd($e->getMessage());
+    // }
 });

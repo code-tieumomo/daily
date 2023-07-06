@@ -96,7 +96,7 @@ class LMSAutoCommentCommand extends Command
                             );
 
                             $commented = LMSCommentService::setReviewAndKeepUserAlive(
-                                $user->token,
+                                $user,
                                 $class->id,
                                 $slot->_id,
                                 $student->student->id,
