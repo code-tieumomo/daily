@@ -13,6 +13,7 @@
         "bensampo/laravel-enum": "^6.3",
         "binarytorch/larecipe": "^2.6",
         "doctrine/dbal": "^3.6",
+        "google/apiclient": "^2.15",
         "guzzlehttp/guzzle": "^7.2",
         "kreait/laravel-firebase": "^5.2",
         "laravel/framework": "^9.19",
